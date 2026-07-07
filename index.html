@@ -393,42 +393,6 @@
       outline-offset: 3px;
     }
 
-    .style-selected {
-      display: grid;
-      grid-template-columns: 16px 1fr;
-      gap: 10px;
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: #f8fafc;
-      padding: 12px;
-    }
-
-    .style-selected::before {
-      content: "";
-      display: block;
-      width: 16px;
-      height: 42px;
-      border-radius: 3px;
-      background: linear-gradient(180deg, var(--vfs-navy) 0%, var(--vfs-slate) 58%, var(--vfs-grey) 58%, var(--vfs-grey) 100%);
-    }
-
-    .style-selected span {
-      display: block;
-      color: var(--vfs-slate);
-      font-size: 0.76rem;
-      font-weight: 850;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .style-selected strong {
-      display: block;
-      margin-top: 3px;
-      color: var(--ink);
-      font-size: 1rem;
-    }
-
     .rate-field {
       position: relative;
     }
@@ -777,16 +741,6 @@
         </div>
 
         <div class="panel control-box">
-          <div class="label">Style</div>
-          <div class="style-selected" aria-label="Selected calculator style">
-            <div>
-              <span>VFS Brand</span>
-              <strong>Navy, slate and white</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel control-box">
           <div class="label">Currency</div>
           <div class="currency-options" role="radiogroup" aria-label="Currency">
             <input id="currency-gbp" type="radio" name="currency" value="GBP" checked>
@@ -948,13 +902,13 @@
           <div class="timeframe-options" role="radiogroup" aria-label="Time frame">
             <input id="timeframe-5" type="radio" name="timeframe" value="5">
             <label for="timeframe-5">5 years</label>
-            <input id="timeframe-10" type="radio" name="timeframe" value="10" checked>
+            <input id="timeframe-10" type="radio" name="timeframe" value="10">
             <label for="timeframe-10">10 years</label>
             <input id="timeframe-15" type="radio" name="timeframe" value="15">
             <label for="timeframe-15">15 years</label>
             <input id="timeframe-20" type="radio" name="timeframe" value="20">
             <label for="timeframe-20">20 years</label>
-            <input id="timeframe-25" type="radio" name="timeframe" value="25">
+            <input id="timeframe-25" type="radio" name="timeframe" value="25" checked>
             <label for="timeframe-25">25 years</label>
           </div>
         </div>
@@ -1149,15 +1103,60 @@
       EUR: "en-IE"
     };
 
+    const SUPABASE_URL = "https://pophyntlggibkmqdmqzv.supabase.co";
+    const SUPABASE_PUBLIC_KEY = "sb_publishable_cFBboFqmKXH37oOgmNdIjA_nLDi-TER";
+    const SUPABASE_TABLE = "VFS Illustration Requests";
+
     elements.form.addEventListener("input", update);
     elements.form.addEventListener("change", update);
     elements.rateToggle.addEventListener("click", toggleRateEditor);
     elements.chargeToggle.addEventListener("click", toggleChargeEditor);
     elements.downloadPdf.addEventListener("click", downloadPdfReport);
+    document.querySelectorAll("input[type='range']").forEach((input) => input.addEventListener("input", playSliderClick));
+    document.querySelectorAll(".currency-options input, .segmented input, .timeframe-options input").forEach((input) => input.addEventListener("change", playOptionClick));
+    document.querySelectorAll(".rate-edit-toggle, .download-button").forEach((button) => button.addEventListener("click", playOptionClick));
     document.querySelectorAll("input[name='timeframe']").forEach((input) => input.addEventListener("change", update));
     window.addEventListener("resize", update);
     setPreparedDate();
     update();
+
+    let sliderAudioContext = null;
+    let lastSliderClickAt = 0;
+
+    function playSliderClick() {
+      const now = performance.now();
+      if (now - lastSliderClickAt < 55) return;
+      lastSliderClickAt = now;
+      playClickTone(920, 0.035, 0.04);
+    }
+
+    function playOptionClick() {
+      playClickTone(680, 0.028, 0.055);
+    }
+
+    function playClickTone(frequency, volume, duration) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      sliderAudioContext = sliderAudioContext || new AudioContext();
+      if (sliderAudioContext.state === "suspended") {
+        sliderAudioContext.resume();
+      }
+
+      const oscillator = sliderAudioContext.createOscillator();
+      const gain = sliderAudioContext.createGain();
+      const start = sliderAudioContext.currentTime;
+
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration - 0.005);
+
+      oscillator.connect(gain);
+      gain.connect(sliderAudioContext.destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration);
+    }
 
     function update() {
       const settings = readSettings();
@@ -1349,15 +1348,116 @@
       const totalInvested = investedByYear(settings, settings.years);
       const assets = await loadPdfAssets();
       const pdfBytes = buildPdfReport(settings, results, totalInvested, assets);
+      const pdfFileName = `${buildPdfFileName(settings)}.pdf`;
+
+      try {
+        await logIllustrationRequest(settings, results, totalInvested, pdfFileName);
+      } catch (error) {
+        console.warn("The PDF was created, but the illustration request was not logged.", error);
+      }
+
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `vfs-regular-savings-plan-illustration-${new Date().toISOString().slice(0, 10)}.pdf`;
+      link.download = pdfFileName;
       document.body.appendChild(link);
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 0);
+    }
+
+    async function logIllustrationRequest(settings, results, totalInvested, pdfFileName) {
+      if (!SUPABASE_URL || !SUPABASE_PUBLIC_KEY) return;
+
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_TABLE)}`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_PUBLIC_KEY,
+          "Authorization": `Bearer ${SUPABASE_PUBLIC_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(buildIllustrationLogPayload(settings, results, totalInvested, pdfFileName))
+      });
+
+      if (!response.ok) {
+        throw new Error(`Supabase logging failed with status ${response.status}`);
+      }
+    }
+
+    function buildIllustrationLogPayload(settings, results, totalInvested, pdfFileName) {
+      const lowFinalValue = finalScenarioValue(results, "low", settings.years);
+      const mediumFinalValue = finalScenarioValue(results, "medium", settings.years);
+      const highFinalValue = finalScenarioValue(results, "high", settings.years);
+
+      return {
+        id: createLogId(),
+        created_at: new Date().toISOString(),
+        client_name: settings.clientName,
+        adviser_name: settings.preparedBy,
+        currency: settings.currency,
+        initial_investment: settings.initial,
+        regular_investment: settings.regular,
+        investment_frequency: settings.frequency,
+        term_years: settings.years,
+        low_growth_rate: settings.rates.low,
+        medium_growth_rate: settings.rates.medium,
+        high_growth_rate: settings.rates.high,
+        establishment_charge: settings.charges.establishment,
+        average_contribution_charge_rate: settings.charges.contributionRate,
+        average_contribution_charge_amount: settings.charges.contribution,
+        annual_management_charge: settings.charges.management,
+        nominee_charge_per_quarter: settings.charges.nominee,
+        total_invested: totalInvested,
+        low_final_value: lowFinalValue,
+        medium_final_value: mediumFinalValue,
+        high_final_value: highFinalValue,
+        low_growth_amount: lowFinalValue - totalInvested,
+        medium_growth_amount: mediumFinalValue - totalInvested,
+        high_growth_amount: highFinalValue - totalInvested,
+        pdf_filename: pdfFileName
+      };
+    }
+
+    function finalScenarioValue(results, scenario, years) {
+      const point = results[scenario][years] || results[scenario][results[scenario].length - 1];
+      return point.value;
+    }
+
+    function createLogId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
+
+      return `request-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function buildPdfFileName(settings) {
+      const clientName = safeFileNamePart(settings.clientName || "Client Name");
+      const regularAmount = Math.round(settings.regular).toLocaleString("en-GB").replace(/,/g, "");
+      const date = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).format(new Date()).replace(/\//g, ".");
+      return `VFS_Illustration_${clientName}_${settings.currency}_${regularAmount}_${date}`;
+    }
+
+    function safeFileNamePart(value) {
+      return String(value)
+        .trim()
+        .replace(/[\\/:*?"<>|]+/g, "")
+        .replace(/\s+/g, " ")
+        .slice(0, 80) || "Client Name";
+    }
+
+    function titleCaseName(value) {
+      return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\b([a-z])/g, (match) => match.toUpperCase())
+        .replace(/\s+/g, " ");
     }
 
     async function loadPdfAssets() {
@@ -1420,10 +1520,10 @@
       ];
 
       pdf.rect(0, 0, 595.28, 12, colors.navy);
-      pdf.text("VFS Regular Savings Plan Illustration", 42, 44, 18, "F2", colors.ink);
+      pdf.text("VFS REGULAR SAVINGS PLAN ILLUSTRATION", 42, 44, 18, "F2", colors.ink);
       pdf.text("FLEXIBILITY / ACCESSIBILITY / GROWTH", 42, 62, 8, "F2", colors.heading);
       drawVfsLogo(pdf, assets.logo, 398, 34);
-      drawPdfInfoBox(pdf, "Client name", settings.clientName || "Not specified", 42, 78, 240, colors);
+      drawPdfInfoBox(pdf, "Client name", titleCaseName(settings.clientName) || "Not specified", 42, 78, 240, colors);
       drawPdfInfoBox(pdf, "VFS Adviser", settings.preparedBy || "Not specified", 300, 78, 240, colors);
 
       const inputRows = [
