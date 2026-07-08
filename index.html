@@ -316,8 +316,9 @@
 
     .rates {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
     }
 
     .charge-summary {
@@ -393,20 +394,36 @@
       outline-offset: 3px;
     }
 
+    .compact-edit-button {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--vfs-navy);
+      padding: 5px 12px;
+      font-size: 0.72rem;
+      font-weight: 850;
+      line-height: 1;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .compact-edit-button:hover {
+      background: var(--soft);
+    }
+
     .rate-field {
-      position: relative;
+      display: grid;
+      gap: 9px;
+      width: 100%;
+      margin: 0;
     }
 
-    .rate-field input {
-      padding-right: 28px;
-    }
-
-    .rate-field span {
-      position: absolute;
-      right: 10px;
-      bottom: 12px;
-      color: var(--muted);
-      font-weight: 700;
+    .rates .slider-wrap,
+    .rates input[type="range"] {
+      display: block;
+      width: 100%;
     }
 
     .results {
@@ -798,7 +815,7 @@
           <div class="label">Annual growth rate assumptions</div>
           <div class="rate-summary" aria-live="polite">
             <div class="rate-summary-item">
-              <span>Low</span>
+              <span>Lower</span>
               <strong id="low-rate-summary">5.0% pa</strong>
             </div>
             <div class="rate-summary-item">
@@ -806,24 +823,54 @@
               <strong id="medium-rate-summary">7.0% pa</strong>
             </div>
             <div class="rate-summary-item">
-              <span>High</span>
+              <span>Higher</span>
               <strong id="high-rate-summary">9.0% pa</strong>
             </div>
           </div>
-          <button class="rate-edit-toggle" id="rate-edit-toggle" type="button" aria-expanded="false" aria-controls="rate-editor">Customise Growth Rates</button>
+          <button class="rate-edit-toggle compact-edit-button" id="rate-edit-toggle" type="button" aria-expanded="false" aria-controls="rate-editor">Edit</button>
           <div class="rates" id="rate-editor" hidden>
-            <label class="rate-field">
-              <span>Low</span>
-              <input id="low-rate" type="number" min="-20" max="50" step="0.1" value="5" aria-label="Low annual growth rate">
-            </label>
-            <label class="rate-field">
-              <span>Medium</span>
-              <input id="medium-rate" type="number" min="-20" max="50" step="0.1" value="7" aria-label="Medium annual growth rate">
-            </label>
-            <label class="rate-field">
-              <span>High</span>
-              <input id="high-rate" type="number" min="-20" max="50" step="0.1" value="9" aria-label="High annual growth rate">
-            </label>
+            <div class="rate-field">
+              <label for="low-rate">
+                <span>Lower</span>
+                <span class="amount-value" id="low-rate-value">5.0%</span>
+              </label>
+              <div class="slider-wrap">
+                <span class="slider-value" id="low-rate-slider-value">5.0%</span>
+                <input id="low-rate" type="range" min="0" max="20" step="0.1" value="5" aria-label="Lower annual growth rate">
+              </div>
+              <div class="range-limits" aria-hidden="true">
+                <span id="low-rate-min">0%</span>
+                <span id="low-rate-max">20%</span>
+              </div>
+            </div>
+            <div class="rate-field">
+              <label for="medium-rate">
+                <span>Medium</span>
+                <span class="amount-value" id="medium-rate-value">7.0%</span>
+              </label>
+              <div class="slider-wrap">
+                <span class="slider-value" id="medium-rate-slider-value">7.0%</span>
+                <input id="medium-rate" type="range" min="0" max="20" step="0.1" value="7" aria-label="Medium annual growth rate">
+              </div>
+              <div class="range-limits" aria-hidden="true">
+                <span id="medium-rate-min">0%</span>
+                <span id="medium-rate-max">20%</span>
+              </div>
+            </div>
+            <div class="rate-field">
+              <label for="high-rate">
+                <span>Higher</span>
+                <span class="amount-value" id="high-rate-value">9.0%</span>
+              </label>
+              <div class="slider-wrap">
+                <span class="slider-value" id="high-rate-slider-value">9.0%</span>
+                <input id="high-rate" type="range" min="0" max="20" step="0.1" value="9" aria-label="Higher annual growth rate">
+              </div>
+              <div class="range-limits" aria-hidden="true">
+                <span id="high-rate-min">0%</span>
+                <span id="high-rate-max">20%</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -832,7 +879,7 @@
           <div class="charge-summary" aria-live="polite">
             <div class="rate-summary-item">
               <span>Establishment charge</span>
-              <strong id="establishment-charge-summary">£1,000</strong>
+              <strong id="establishment-charge-summary">£500</strong>
             </div>
             <div class="rate-summary-item">
               <span>Average Contribution Charge</span>
@@ -847,16 +894,16 @@
               <strong id="nominee-charge-summary">£10 per quarter</strong>
             </div>
           </div>
-          <button class="rate-edit-toggle" id="charge-edit-toggle" type="button" aria-expanded="false" aria-controls="charge-editor">Customise Standard Charges</button>
+          <button class="rate-edit-toggle compact-edit-button" id="charge-edit-toggle" type="button" aria-expanded="false" aria-controls="charge-editor">Edit</button>
           <div class="charges" id="charge-editor" hidden>
             <div>
               <label for="establishment-charge">
                 <span>Establishment charge</span>
-                <span class="amount-value" id="establishment-charge-value">£1,000</span>
+                <span class="amount-value" id="establishment-charge-value">£500</span>
               </label>
               <div class="slider-wrap">
-                <span class="slider-value" id="establishment-slider-value">£1,000</span>
-                <input id="establishment-charge" type="range" min="0" max="1000" step="10" value="1000" aria-label="Establishment charge">
+                <span class="slider-value" id="establishment-slider-value">£500</span>
+                <input id="establishment-charge" type="range" min="0" max="1000" step="10" value="500" aria-label="Establishment charge">
               </div>
               <div class="range-limits" aria-hidden="true">
                 <span id="establishment-min">£0</span>
@@ -969,9 +1016,9 @@
                 <tr>
                   <th>Year</th>
                   <th>Invested</th>
-                  <th>Low</th>
-                  <th>Medium</th>
-                  <th>High</th>
+                  <th id="low-table-heading">Lower 5.0%</th>
+                  <th id="medium-table-heading">Medium 7.0%</th>
+                  <th id="high-table-heading">Higher 9.0%</th>
                 </tr>
               </thead>
               <tbody id="projection-table"></tbody>
@@ -1037,10 +1084,22 @@
         contributionRateBubble: document.querySelector("#contribution-charge-slider-value"),
         management: document.querySelector("#management-charge-value"),
         managementBubble: document.querySelector("#management-charge-slider-value"),
+        lowRate: document.querySelector("#low-rate-value"),
+        lowRateBubble: document.querySelector("#low-rate-slider-value"),
+        mediumRate: document.querySelector("#medium-rate-value"),
+        mediumRateBubble: document.querySelector("#medium-rate-slider-value"),
+        highRate: document.querySelector("#high-rate-value"),
+        highRateBubble: document.querySelector("#high-rate-slider-value"),
         initialMin: document.querySelector("#initial-min"),
         initialMax: document.querySelector("#initial-max"),
         regularMin: document.querySelector("#regular-min"),
         regularMax: document.querySelector("#regular-max"),
+        lowRateMin: document.querySelector("#low-rate-min"),
+        lowRateMax: document.querySelector("#low-rate-max"),
+        mediumRateMin: document.querySelector("#medium-rate-min"),
+        mediumRateMax: document.querySelector("#medium-rate-max"),
+        highRateMin: document.querySelector("#high-rate-min"),
+        highRateMax: document.querySelector("#high-rate-max"),
         establishmentMin: document.querySelector("#establishment-min"),
         establishmentMax: document.querySelector("#establishment-max"),
         contributionRateMin: document.querySelector("#contribution-charge-min"),
@@ -1077,6 +1136,11 @@
       outcomesTitle: document.querySelector("#outcomes-title"),
       projectionTitle: document.querySelector("#projection-title"),
       table: document.querySelector("#projection-table"),
+      tableHeadings: {
+        low: document.querySelector("#low-table-heading"),
+        medium: document.querySelector("#medium-table-heading"),
+        high: document.querySelector("#high-table-heading")
+      },
       canvas: document.querySelector("#projection-chart"),
       metrics: {
         low: {
@@ -1106,7 +1170,12 @@
     const SUPABASE_URL = "https://pophyntlggibkmqdmqzv.supabase.co";
     const SUPABASE_PUBLIC_KEY = "sb_publishable_cFBboFqmKXH37oOgmNdIjA_nLDi-TER";
     const SUPABASE_TABLE = "VFS Illustration Requests";
+    let establishmentChargeCustomised = false;
 
+    elements.regular.addEventListener("input", syncEstablishmentCharge);
+    elements.charges.establishment.addEventListener("input", () => {
+      establishmentChargeCustomised = true;
+    });
     elements.form.addEventListener("input", update);
     elements.form.addEventListener("change", update);
     elements.rateToggle.addEventListener("click", toggleRateEditor);
@@ -1118,6 +1187,7 @@
     document.querySelectorAll("input[name='timeframe']").forEach((input) => input.addEventListener("change", update));
     window.addEventListener("resize", update);
     setPreparedDate();
+    syncEstablishmentCharge();
     update();
 
     let sliderAudioContext = null;
@@ -1183,14 +1253,14 @@
       const isHidden = elements.rateEditor.hidden;
       elements.rateEditor.hidden = !isHidden;
       elements.rateToggle.setAttribute("aria-expanded", String(isHidden));
-      elements.rateToggle.textContent = isHidden ? "Done" : "Customise Growth Rates";
+      elements.rateToggle.textContent = isHidden ? "Close" : "Edit";
     }
 
     function toggleChargeEditor() {
       const isHidden = elements.chargeEditor.hidden;
       elements.chargeEditor.hidden = !isHidden;
       elements.chargeToggle.setAttribute("aria-expanded", String(isHidden));
-      elements.chargeToggle.textContent = isHidden ? "Done" : "Customise Standard Charges";
+      elements.chargeToggle.textContent = isHidden ? "Close" : "Edit";
     }
 
     function setPreparedDate() {
@@ -1228,9 +1298,18 @@
       };
     }
 
+    function syncEstablishmentCharge() {
+      if (establishmentChargeCustomised) return;
+
+      const cappedCharge = Math.min(
+        positiveNumber(elements.regular.value),
+        positiveNumber(elements.charges.establishment.max)
+      );
+      elements.charges.establishment.value = String(cappedCharge);
+    }
+
     function project(settings, annualRate) {
       const monthlyRate = Math.pow(1 + annualRate / 100, 1 / 12) - 1;
-      const monthlyManagementCharge = Math.pow(1 + settings.charges.management / 100, 1 / 12) - 1;
       const interval = frequencyInterval(settings.frequency);
       const netContribution = Math.max(0, settings.regular - settings.charges.contribution);
       let value = Math.max(0, settings.initial - settings.charges.establishment);
@@ -1238,7 +1317,6 @@
 
       for (let month = 1; month <= settings.years * 12; month += 1) {
         value *= 1 + monthlyRate;
-        value *= 1 - monthlyManagementCharge;
 
         if (month % interval === 0) {
           value += netContribution;
@@ -1262,25 +1340,43 @@
       const establishmentValue = formatMoney(settings.charges.establishment);
       const contributionRateValue = formatRate(settings.charges.contributionRate);
       const managementValue = formatRate(settings.charges.management);
+      const lowRateValue = formatRate(settings.rates.low);
+      const mediumRateValue = formatRate(settings.rates.medium);
+      const highRateValue = formatRate(settings.rates.high);
       elements.amounts.initial.textContent = initialValue;
       elements.amounts.regular.textContent = regularValue;
       elements.amounts.establishment.textContent = establishmentValue;
       elements.amounts.contributionRate.textContent = contributionRateValue;
       elements.amounts.management.textContent = managementValue;
+      elements.amounts.lowRate.textContent = lowRateValue;
+      elements.amounts.mediumRate.textContent = mediumRateValue;
+      elements.amounts.highRate.textContent = highRateValue;
       elements.amounts.initialBubble.textContent = initialValue;
       elements.amounts.regularBubble.textContent = regularValue;
       elements.amounts.establishmentBubble.textContent = establishmentValue;
       elements.amounts.contributionRateBubble.textContent = contributionRateValue;
       elements.amounts.managementBubble.textContent = managementValue;
+      elements.amounts.lowRateBubble.textContent = lowRateValue;
+      elements.amounts.mediumRateBubble.textContent = mediumRateValue;
+      elements.amounts.highRateBubble.textContent = highRateValue;
       positionSliderBubble(elements.initial, elements.amounts.initialBubble);
       positionSliderBubble(elements.regular, elements.amounts.regularBubble);
       positionSliderBubble(elements.charges.establishment, elements.amounts.establishmentBubble);
       positionSliderBubble(elements.charges.contributionRate, elements.amounts.contributionRateBubble);
       positionSliderBubble(elements.charges.management, elements.amounts.managementBubble);
+      positionSliderBubble(elements.rates.low, elements.amounts.lowRateBubble);
+      positionSliderBubble(elements.rates.medium, elements.amounts.mediumRateBubble);
+      positionSliderBubble(elements.rates.high, elements.amounts.highRateBubble);
       elements.amounts.initialMin.textContent = formatMoney(Number(elements.initial.min));
       elements.amounts.initialMax.textContent = formatMoney(Number(elements.initial.max));
       elements.amounts.regularMin.textContent = formatMoney(Number(elements.regular.min));
       elements.amounts.regularMax.textContent = formatMoney(Number(elements.regular.max));
+      elements.amounts.lowRateMin.textContent = formatRate(Number(elements.rates.low.min));
+      elements.amounts.lowRateMax.textContent = formatRate(Number(elements.rates.low.max));
+      elements.amounts.mediumRateMin.textContent = formatRate(Number(elements.rates.medium.min));
+      elements.amounts.mediumRateMax.textContent = formatRate(Number(elements.rates.medium.max));
+      elements.amounts.highRateMin.textContent = formatRate(Number(elements.rates.high.min));
+      elements.amounts.highRateMax.textContent = formatRate(Number(elements.rates.high.max));
       elements.amounts.establishmentMin.textContent = formatMoney(Number(elements.charges.establishment.min));
       elements.amounts.establishmentMax.textContent = formatMoney(Number(elements.charges.establishment.max));
       elements.amounts.contributionRateMin.textContent = `${formatRate(Number(elements.charges.contributionRate.min))}`;
@@ -1322,6 +1418,9 @@
 
     function renderTable(results, settings) {
       const rows = [];
+      elements.tableHeadings.low.textContent = `Lower ${formatRate(settings.rates.low)}`;
+      elements.tableHeadings.medium.textContent = `Medium ${formatRate(settings.rates.medium)}`;
+      elements.tableHeadings.high.textContent = `Higher ${formatRate(settings.rates.high)}`;
 
       displayMilestoneYears(settings.years).forEach((year) => {
         rows.push(`
@@ -1534,7 +1633,7 @@
       ];
       const chargeRows = [
         ["Establishment charge", formatPdfMoney(settings.charges.establishment, settings.currency)],
-        ["Avg contribution charge", `${formatRate(settings.charges.contributionRate)} (${formatPdfMoney(settings.charges.contribution, settings.currency)})`],
+        ["Avg contribution charge", formatPdfMoney(settings.charges.contribution, settings.currency)],
         ["Annual management charge", `${formatRate(settings.charges.management)} pa`],
         ["Nominee charge", `${formatPdfMoney(settings.charges.nominee, settings.currency)} per quarter`]
       ];
@@ -1680,7 +1779,7 @@
 
     function drawMilestoneTable(pdf, settings, results, x, y, colors) {
       const widths = [72, 104, 104, 104, 104];
-      const headers = ["Year", "Invested", "Low", "Medium", "High"];
+      const headers = ["Year", "Invested", `Lower ${formatRate(settings.rates.low)}`, `Medium ${formatRate(settings.rates.medium)}`, `Higher ${formatRate(settings.rates.high)}`];
       const rowHeight = 14;
       const rows = displayMilestoneYears(settings.years);
       let colX = x;
@@ -1745,6 +1844,8 @@
       });
       pdf.text("Years", chartX + chartWidth / 2 - 10, y + height + 8, 7, "F2", colors.muted);
 
+      const investedPoints = investedPointsByYear(settings);
+
       pdf.band(
         results.high.map((point) => ({
           x: chartX + chartWidth * (point.year / settings.years),
@@ -1755,6 +1856,23 @@
           y: chartY + chartHeight - chartHeight * (point.value / maxValue)
         })),
         [0.93, 0.94, 0.97]
+      );
+
+      pdf.dottedPolyline(
+        investedPoints.map((point) => ({
+          x: chartX + chartWidth * (point.year / settings.years),
+          y: chartY + chartHeight - chartHeight * (point.value / maxValue)
+        })),
+        colors.muted,
+        1.1
+      );
+      pdf.text(
+        "Invested",
+        chartX + chartWidth + 8,
+        chartY + chartHeight - chartHeight * (investedPoints[investedPoints.length - 1].value / maxValue) + 2,
+        7,
+        "F2",
+        colors.muted
       );
 
       scenarios.forEach((scenario) => {
@@ -1802,6 +1920,11 @@
           if (points.length < 2) return;
           content.push(color(stroke, "RG"));
           content.push(`${lineWidth} w ${points.map((point, index) => `${point.x.toFixed(2)} ${yPos(point.y).toFixed(2)} ${index === 0 ? "m" : "l"}`).join(" ")} S`);
+        },
+        dottedPolyline(points, stroke = [0, 0, 0], lineWidth = 1) {
+          if (points.length < 2) return;
+          content.push(color(stroke, "RG"));
+          content.push(`[1.4 3.2] 0 d ${lineWidth} w ${points.map((point, index) => `${point.x.toFixed(2)} ${yPos(point.y).toFixed(2)} ${index === 0 ? "m" : "l"}`).join(" ")} S [] 0 d`);
         },
         band(topPoints, bottomPoints, fill = [1, 1, 1]) {
           if (topPoints.length < 2 || bottomPoints.length < 2) return;
@@ -1893,18 +2016,21 @@
       };
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
+      const investedPoints = investedPointsByYear(settings);
       const maxValue = niceMax(Math.max(
         ...results.low.map(point => point.value),
         ...results.medium.map(point => point.value),
         ...results.high.map(point => point.value),
-        investedByYear(settings, settings.years)
+        ...investedPoints.map(point => point.value)
       ));
 
       drawGrid(ctx, width, height, padding, chartWidth, chartHeight, maxValue, settings.years);
       drawRangeBand(ctx, results.low, results.high, padding, chartWidth, chartHeight, maxValue, settings.years);
+      drawDashedSeries(ctx, investedPoints, palette.muted, padding, chartWidth, chartHeight, maxValue, settings.years, 2);
       drawSeries(ctx, results.low, palette.low, padding, chartWidth, chartHeight, maxValue, settings.years, 2);
       drawSeries(ctx, results.high, palette.high, padding, chartWidth, chartHeight, maxValue, settings.years, 2);
       drawSeries(ctx, results.medium, palette.medium, padding, chartWidth, chartHeight, maxValue, settings.years, 4);
+      drawEndLabel(ctx, "Invested amount", investedPoints, palette.muted, padding, chartWidth, chartHeight, maxValue, settings.currency, width);
       drawEndLabel(ctx, `${formatRate(settings.rates.low)} growth`, results.low, palette.low, padding, chartWidth, chartHeight, maxValue, settings.currency, width);
       drawEndLabel(ctx, `${formatRate(settings.rates.medium)} growth`, results.medium, palette.medium, padding, chartWidth, chartHeight, maxValue, settings.currency, width);
       drawEndLabel(ctx, `${formatRate(settings.rates.high)} growth`, results.high, palette.high, padding, chartWidth, chartHeight, maxValue, settings.currency, width);
@@ -2003,6 +2129,30 @@
       ctx.restore();
     }
 
+    function drawDashedSeries(ctx, points, color, padding, chartWidth, chartHeight, maxValue, periodYears, lineWidth = 2) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.setLineDash([7, 6]);
+      ctx.beginPath();
+
+      points.forEach((point, index) => {
+        const x = padding.left + chartWidth * (point.year / periodYears);
+        const y = padding.top + chartHeight - chartHeight * (point.value / maxValue);
+
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+
+      ctx.stroke();
+      ctx.restore();
+    }
+
     function drawEndLabel(ctx, label, points, color, padding, chartWidth, chartHeight, maxValue, currency, canvasWidth) {
       const finalPoint = points[points.length - 1];
       const y = padding.top + chartHeight - chartHeight * (finalPoint.value / maxValue);
@@ -2023,6 +2173,13 @@
       const months = year * 12;
       const interval = frequencyInterval(settings.frequency);
       return settings.initial + Math.floor(months / interval) * settings.regular;
+    }
+
+    function investedPointsByYear(settings) {
+      return Array.from({ length: settings.years + 1 }, (_, year) => ({
+        year,
+        value: investedByYear(settings, year)
+      }));
     }
 
     function frequencyInterval(frequency) {
@@ -2110,7 +2267,7 @@
       const formatted = new Intl.NumberFormat("en-GB", {
         maximumFractionDigits: 0
       }).format(Math.round(value));
-      return `${currency} ${formatted}`;
+      return `${currencySymbol(currency)}${formatted}`;
     }
 
     function formatPdfGrowthMoney(value, currency) {
@@ -2118,9 +2275,10 @@
     }
 
     function shortPdfMoney(value, currency) {
-      if (value >= 1000000) return `${currency} ${(value / 1000000).toFixed(1)}m`;
-      if (value >= 1000) return `${currency} ${Math.round(value / 1000)}k`;
-      return `${currency} ${Math.round(value)}`;
+      const symbol = currencySymbol(currency);
+      if (value >= 1000000) return `${symbol}${(value / 1000000).toFixed(1)}m`;
+      if (value >= 1000) return `${symbol}${Math.round(value / 1000)}k`;
+      return `${symbol}${Math.round(value)}`;
     }
 
     function currencySymbol(currency) {
@@ -2142,10 +2300,16 @@
 
     function escapePdfText(text) {
       return String(text)
-        .replace(/[^\x20-\x7E]/g, "")
-        .replace(/\\/g, "\\\\")
-        .replace(/\(/g, "\\(")
-        .replace(/\)/g, "\\)");
+        .split("")
+        .map((character) => {
+          if (character === "\\") return "\\\\";
+          if (character === "(") return "\\(";
+          if (character === ")") return "\\)";
+          if (character === "£") return "\\243";
+          if (character === "€") return "\\200";
+          return /[\x20-\x7E]/.test(character) ? character : "";
+        })
+        .join("");
     }
 
     function getCss(variable) {
