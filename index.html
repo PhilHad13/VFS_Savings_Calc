@@ -832,7 +832,7 @@
           <div class="charge-summary" aria-live="polite">
             <div class="rate-summary-item">
               <span>Establishment charge</span>
-              <strong id="establishment-charge-summary">£500</strong>
+              <strong id="establishment-charge-summary">£1,000</strong>
             </div>
             <div class="rate-summary-item">
               <span>Average Contribution Charge</span>
@@ -852,15 +852,15 @@
             <div>
               <label for="establishment-charge">
                 <span>Establishment charge</span>
-                <span class="amount-value" id="establishment-charge-value">£500</span>
+                <span class="amount-value" id="establishment-charge-value">£1,000</span>
               </label>
               <div class="slider-wrap">
-                <span class="slider-value" id="establishment-slider-value">£500</span>
-                <input id="establishment-charge" type="range" min="0" max="500" step="10" value="500" aria-label="Establishment charge">
+                <span class="slider-value" id="establishment-slider-value">£1,000</span>
+                <input id="establishment-charge" type="range" min="0" max="1000" step="10" value="1000" aria-label="Establishment charge">
               </div>
               <div class="range-limits" aria-hidden="true">
                 <span id="establishment-min">£0</span>
-                <span id="establishment-max">£500</span>
+                <span id="establishment-max">£1,000</span>
               </div>
             </div>
             <div>
@@ -1520,9 +1520,9 @@
       ];
 
       pdf.rect(0, 0, 595.28, 12, colors.navy);
-      pdf.text("VFS REGULAR SAVINGS PLAN ILLUSTRATION", 42, 44, 18, "F2", colors.ink);
+      pdf.text("VFS REGULAR SAVINGS PLAN", 42, 44, 18, "F2", colors.ink);
       pdf.text("FLEXIBILITY / ACCESSIBILITY / GROWTH", 42, 62, 8, "F2", colors.heading);
-      drawVfsLogo(pdf, assets.logo, 398, 34);
+      drawVfsLogo(pdf, assets.logo, 408, 28);
       drawPdfInfoBox(pdf, "Client name", titleCaseName(settings.clientName) || "Not specified", 42, 78, 240, colors);
       drawPdfInfoBox(pdf, "VFS Adviser", settings.preparedBy || "Not specified", 300, 78, 240, colors);
 
