@@ -1312,7 +1312,7 @@
       const monthlyRate = Math.pow(1 + annualRate / 100, 1 / 12) - 1;
       const interval = frequencyInterval(settings.frequency);
       const netContribution = Math.max(0, settings.regular - settings.charges.contribution);
-      let value = Math.max(0, settings.initial - settings.charges.establishment);
+      let value = settings.initial - settings.charges.establishment;
       const points = [{ month: 0, year: 0, value }];
 
       for (let month = 1; month <= settings.years * 12; month += 1) {
