@@ -1964,8 +1964,8 @@
         "<< /Type /Catalog /Pages 2 0 R >>",
         "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
         `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${width} ${height}] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> ${imageResource} >> /Contents ${contentObjectNumber} 0 R >>`,
-        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>",
         ...imageObjects,
         `<< /Length ${pageContent.length} >>\nstream\n${pageContent}\nendstream`
       ];
@@ -2267,7 +2267,7 @@
       const formatted = new Intl.NumberFormat("en-GB", {
         maximumFractionDigits: 0
       }).format(Math.round(value));
-      return `${currencySymbol(currency)}${formatted}`;
+      return `${currencySymbol(currency)} ${formatted}`;
     }
 
     function formatPdfGrowthMoney(value, currency) {
@@ -2276,9 +2276,9 @@
 
     function shortPdfMoney(value, currency) {
       const symbol = currencySymbol(currency);
-      if (value >= 1000000) return `${symbol}${(value / 1000000).toFixed(1)}m`;
-      if (value >= 1000) return `${symbol}${Math.round(value / 1000)}k`;
-      return `${symbol}${Math.round(value)}`;
+      if (value >= 1000000) return `${symbol} ${(value / 1000000).toFixed(1)}m`;
+      if (value >= 1000) return `${symbol} ${Math.round(value / 1000)}k`;
+      return `${symbol} ${Math.round(value)}`;
     }
 
     function currencySymbol(currency) {
